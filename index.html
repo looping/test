@@ -1,0 +1,608 @@
+<html>
+<head>
+<title>Five-in-a-row</title>
+<script type="text/javascript" src="jscore/fir.js"></script>
+<script language="JavaScript">
+boardSize=15;
+userSq= 1;
+machSq=-1;
+blinkSq="b-1";
+blinkHint="b1";
+myTurn=false;
+winningMove=9999999;
+openFour   =8888888;
+twoThrees  =7777777;
+board=new Array();
+
+
+
+for (i=0;i<20;i++) {
+	board[i]=new Array();
+	for (j=0;j<20;j++) {
+		board[i][j]=0;
+	}
+}
+if (document.images) {
+ uImg=new Image(); uImg.src='img/s'+userSq+'.gif';
+ mImg=new Image(); mImg.src='img/s'+machSq+'.gif';
+ uIm1=new Image(); uIm1.src='img/sb1.gif';
+ mIm1=new Image(); mIm1.src='img/sb-1.gif';
+ bImg=new Image(); bImg.src='img/s0.gif';
+}
+
+iLastUserMove=0;
+jLastUserMove=0;
+
+var pos = new Array(6,6);
+function machineMove(iUser,jUser) {
+	pos = getBestMachMove(board, boardSize, machSq);
+	board[pos[0]][pos[1]]=machSq;
+	if (document.images) {
+		drawSquare(pos[0],pos[1],blinkSq);
+		setTimeout("drawSquare(pos[0],pos[1],machSq)",900);
+	}
+	else {
+		drawSquare(pos[0],pos[1],machSq);
+	}
+	if (winningPos(pos[0],pos[1],machSq)==winningMove){
+		setTimeout('gameOver=1;alert("I won!")',900);
+	} else if (drawPos) {
+		setTimeout('gameOver=1;alert("It\'s a draw!")',900);
+	} else {
+		setTimeout("myTurn=false;",950);
+	}
+}
+
+function winningPos(i,j,mySq) {
+	test3=0;
+	test4=0;
+
+	L=1;
+	m=1;
+	while (j+m<boardSize  && board[i][j+m]==mySq) {
+		L++; 
+		m++;
+	}
+	m1=m;
+	m=1; 
+	while (j-m>=0 && board[i][j-m]==mySq) {
+		L++; 
+		m++;
+	}
+	m2=m;   
+	if (L>4) { 
+		return winningMove; 
+	}
+	side1=(j+m1<boardSize && board[i][j+m1]==0);
+	side2=(j-m2>=0 && board[i][j-m2]==0);
+
+	if (L==4 && (side1 || side2)) {
+		test3++;
+	}	
+	if (side1 && side2) {
+		if (L==4) {
+			test4=1;
+		}
+		if (L==3) {
+			test3++;
+		}
+	}
+
+	L=1;
+	m=1; 
+	while (i+m<boardSize  && board[i+m][j]==mySq) {
+		L++; m++;
+	} 
+	m1=m;
+	m=1; while (i-m>=0 && board[i-m][j]==mySq) {L++; m++} m2=m;   
+	if (L>4) { 
+		return winningMove; 
+	}
+	side1=(i+m1<boardSize && board[i+m1][j]==0);
+	side2=(i-m2>=0 && board[i-m2][j]==0);
+	if (L==4 && (side1 || side2)) {
+		test3++;
+	}
+	if (side1 && side2) {
+		if (L==4) {
+			test4=1;
+		}
+		if (L==3) {
+			test3++;
+		}
+	}
+
+	L=1;
+	m=1; 
+	while (i+m<boardSize && j+m<boardSize && board[i+m][j+m]==mySq) {
+		L++; m++;
+	} 
+	m1=m;
+	m=1; 
+	while (i-m>=0 && j-m>=0 && board[i-m][j-m]==mySq) {
+		L++; m++;
+	} 
+	m2=m;   
+	if (L>4) {
+		return winningMove; 
+	}
+	side1=(i+m1<boardSize && j+m1<boardSize && board[i+m1][j+m1]==0);
+	side2=(i-m2>=0 && j-m2>=0 && board[i-m2][j-m2]==0);
+	if (L==4 && (side1 || side2)) {
+		test3++;
+	}
+	if (side1 && side2) {
+		if (L==4) test4=1;
+		if (L==3) test3++;
+	}
+
+	L=1;
+	m=1; 
+	while (i+m<boardSize  && j-m>=0 && board[i+m][j-m]==mySq) {
+		L++; 
+		m++;
+	} 
+	m1=m;
+	m=1; 
+	while (i-m>=0 && j+m<boardSize && board[i-m][j+m]==mySq) {
+		L++; 
+		m++;
+	} 
+	m2=m; 
+	if (L>4) { 
+		return winningMove; 
+	}
+	side1=(i+m1<boardSize && j-m1>=0 && board[i+m1][j-m1]==0);
+	side2=(i-m2>=0 && j+m2<boardSize && board[i-m2][j+m2]==0);
+	if (L==4 && (side1 || side2)) {
+		test3++;
+	}
+	if (side1 && side2) {
+		if (L==4) {
+			test4=1;
+		}
+		if (L==3) {
+			test3++;
+		}
+	}
+
+	if (test4) {
+		return openFour;
+	}
+	if (test3>=2) {
+		return twoThrees;
+	}
+	return -1;
+}
+function clk(iMove,jMove) {
+
+	if (myTurn || autoplayOn) return; 
+	hideHint();
+
+	if (board[iMove][jMove]!=0) {
+		alert('This square is not empty! Please choose another.'); 
+		return; 
+	}
+	board[iMove][jMove]=userSq;
+	drawSquare(iMove,jMove,userSq);
+	myTurn=true;
+	iLastUserMove=iMove;
+	jLastUserMove=jMove;
+
+	dly=(document.images)?10:boardSize*30;
+
+	if (winningPos(iMove,jMove,userSq)==winningMove) {
+		setTimeout("gameOver=1;alert('You won!');",dly);
+	} else {
+		setTimeout("machineMove(iLastUserMove,jLastUserMove);",dly);
+	}
+}
+
+
+function drawSquare(par1,par2,par3) {
+	if (document.images) {
+		eval('self.document.s'+par1+'_'+par2+'.src="img/s'+par3+'.gif"');
+	} else {
+		setTimeout("writeBoard()",50);
+	}
+}
+
+hintShown=false;
+
+function showHint () {
+	if (myTurn && autoplayOn){
+		return;
+	}
+	if (hintShown) {
+		hideHint();
+		return;
+	}
+	hintShown=1;
+	getBestUserMove();
+
+	if (document.images) {
+		drawSquare(pos[0],pos[1],blinkHint);
+	}
+}
+
+function hideHint() {
+	hintShown=0;
+	drawSquare(pos[0],pos[1],board[pos[0]][pos[1]]);
+}
+
+function autoplay() {
+	//h = 2;
+	if (autoplayOn) {
+		if (myTurn) {
+			pos = getBestMachMove(board, boardSize, machSq);
+			board[pos[0]][pos[1]]=machSq;
+			drawSquare(pos[0],pos[1],blinkSq);
+			timerDR=setTimeout("drawSquare(pos[0],pos[1],machSq);",900);
+				if (winningPos(pos[0],pos[1],machSq)==winningMove){
+					setTimeout('gameOver=1;alert("Player O won!")',900);
+				} else if (drawPos){
+					setTimeout('alert("It\'s a draw!")',900);
+				} else {
+					 myTurn=false; timerAP=setTimeout("autoplay()",950); 
+				}
+		} else {
+			pos = getBestUserMove(board, boardSize, userSq);
+			board[pos[0]][pos[1]]=userSq;
+			drawSquare(pos[0],pos[1],blinkHint);
+			timerDR=setTimeout("drawSquare(pos[0],pos[1],userSq)",900);
+			if (winningPos(pos[0],pos[1],userSq)==winningMove){
+				setTimeout('gameOver=1;alert("Player X won!")',900);
+			} else {
+				myTurn=true;
+				timerAP=setTimeout("autoplay()",950); 
+			}
+		}
+	}
+}
+
+autoplayOn=0;
+timerAP=0;
+function setAutoplay() {
+	if (gameOver) resetGame();
+	if (autoplayOn) {
+		if (myTurn) { setTimeout("setAutoplay()",950); return; }
+		autoplayOn=0;clearTimeout(timerAP);return;
+	}
+	if (document.images) setTimeout("hideHint();autoplayOn=1;autoplay();",100);
+	else alert('Sorry, Autoplay Mode is not supported for your browser!');
+}
+
+function writeBoard () {
+	if (parseInt(navigator.appVersion)>3){
+		docID=document.open("text/html","replace");
+	}
+	document.getElementById("board").innerHTML = '';
+
+	var buf = '';
+	for (i=0;i<boardSize;i++) {
+		for (j=0;j<boardSize;j++) {
+			buf+='<a onClick="clk('+i+','+j+')" ><img name="s'+i+'_'+j+'" src="img/s'+board[i][j]+'.gif" ></a'; 
+		}
+		buf+='\n><img src="g.gif" width=1 height=16><br';
+		if (buf.length>10000) {
+			document.getElementById("board").innerHTML += buf;
+			buf='';
+		}
+	}
+	buf+='\n \\><img src="g.gif" width='+(boardSize*16+1)+' height=1>';
+
+	document.getElementById("board").innerHTML += buf;
+	buf='';
+}
+
+function resetGame() {
+	if (autoplayOn){
+		autoplayOn=0;
+		clearTimeout(timerAP);
+		clearTimeout(timerDR);
+	}
+	drawPos=0;
+	myTurn=0;
+	autoplayOn=0;
+	gameOver=0;
+
+	for (i=0;i<20;i++) {
+		for (j=0;j<20;j++) {
+			board[i][j]=0;
+		}
+	}
+
+	if (!document) return;
+	if (document.images) {
+		if (!document.s9_9) return;
+		for (i=0;i<boardSize;i++) {
+			for (j=0;j<boardSize;j++) {
+				eval('document.s'+i+'_'+j+'.src=bImg.src');  
+			}
+		}
+	}
+	else writeBoard();
+}
+
+function init() {
+	if (autoplayOn){
+		autoplayOn=0;
+		clearTimeout(timerAP);
+		clearTimeout(timerDR);
+	}
+	writeBoard();
+	resetGame();
+}
+
+//-->
+</script>
+<style type = "text/css">
+#img{
+	width :16;
+	height : 16;
+	border : 0;
+}
+</style>
+</head>
+
+<input name="newgame" type="button" value="New Game" onclick="setTimeout('top.resetGame()',100)">
+<input name="autoplay" type="button" value="Auto-Play" onclick="setAutoplay()">
+<br />
+<div id = "board">
+<a onclick="clk(0,0)"><img name="s0_0" src="img/s0.gif" ></a>
+<a onclick="clk(0,1)"><img name="s0_1" src="img/s0.gif" ></a>
+<a onclick="clk(0,2)"><img name="s0_2" src="img/s0.gif" ></a>
+<a onclick="clk(0,3)"><img name="s0_3" src="img/s0.gif" ></a>
+<a onclick="clk(0,4)"><img name="s0_4" src="img/s0.gif" ></a>
+<a onclick="clk(0,5)"><img name="s0_5" src="img/s0.gif" ></a>
+<a onclick="clk(0,6)"><img name="s0_6" src="img/s0.gif" ></a>
+<a onclick="clk(0,7)"><img name="s0_7" src="img/s0.gif" ></a>
+<a onclick="clk(0,8)"><img name="s0_8" src="img/s0.gif" ></a>
+<a onclick="clk(0,9)"><img name="s0_9" src="img/s0.gif" ></a>
+<a onclick="clk(0,10)"><img name="s0_10" src="img/s0.gif" ></a>
+<a onclick="clk(0,11)"><img name="s0_11" src="img/s0.gif" ></a>
+<a onclick="clk(0,12)"><img name="s0_12" src="img/s0.gif" ></a>
+<a onclick="clk(0,13)"><img name="s0_13" src="img/s0.gif" ></a>
+<a onclick="clk(0,14)"><img name="s0_14" src="img/s0.gif" ></a>
+<br />
+
+<a onclick="clk(1,0)"><img name="s1_0" src="img/s0.gif" ></a>
+<a onclick="clk(1,1)"><img name="s1_1" src="img/s0.gif" ></a>
+<a onclick="clk(1,2)"><img name="s1_2" src="img/s0.gif" ></a>
+<a onclick="clk(1,3)"><img name="s1_3" src="img/s0.gif" ></a>
+<a onclick="clk(1,4)"><img name="s1_4" src="img/s0.gif" ></a>
+<a onclick="clk(1,5)"><img name="s1_5" src="img/s0.gif" ></a>
+<a onclick="clk(1,6)"><img name="s1_6" src="img/s0.gif" ></a>
+<a onclick="clk(1,7)"><img name="s1_7" src="img/s0.gif" ></a>
+<a onclick="clk(1,8)"><img name="s1_8" src="img/s0.gif" ></a>
+<a onclick="clk(1,9)"><img name="s1_9" src="img/s0.gif" ></a>
+<a onclick="clk(1,10)"><img name="s1_10" src="img/s0.gif" ></a>
+<a onclick="clk(1,11)"><img name="s1_11" src="img/s0.gif" ></a>
+<a onclick="clk(1,12)"><img name="s1_12" src="img/s0.gif" ></a>
+<a onclick="clk(1,13)"><img name="s1_13" src="img/s0.gif" ></a>
+<a onclick="clk(1,14)"><img name="s1_14" src="img/s0.gif" ></a>
+<br />
+
+<a onclick="clk(2,0)"><img name="s2_0" src="img/s0.gif" ></a>
+<a onclick="clk(2,1)"><img name="s2_1" src="img/s0.gif" ></a>
+<a onclick="clk(2,2)"><img name="s2_2" src="img/s0.gif" ></a>
+<a onclick="clk(2,3)"><img name="s2_3" src="img/s0.gif" ></a>
+<a onclick="clk(2,4)"><img name="s2_4" src="img/s0.gif" ></a>
+<a onclick="clk(2,5)"><img name="s2_5" src="img/s0.gif" ></a>
+<a onclick="clk(2,6)"><img name="s2_6" src="img/s0.gif" ></a>
+<a onclick="clk(2,7)"><img name="s2_7" src="img/s0.gif" ></a>
+<a onclick="clk(2,8)"><img name="s2_8" src="img/s0.gif" ></a>
+<a onclick="clk(2,9)"><img name="s2_9" src="img/s0.gif" ></a>
+<a onclick="clk(2,10)"><img name="s2_10" src="img/s0.gif" ></a>
+<a onclick="clk(2,11)"><img name="s2_11" src="img/s0.gif" ></a>
+<a onclick="clk(2,12)"><img name="s2_12" src="img/s0.gif" ></a>
+<a onclick="clk(2,13)"><img name="s2_13" src="img/s0.gif" ></a>
+<a onclick="clk(2,14)"><img name="s2_14" src="img/s0.gif" ></a>
+<br />
+
+<a onclick="clk(3,0)"><img name="s3_0" src="img/s0.gif" ></a>
+<a onclick="clk(3,1)"><img name="s3_1" src="img/s0.gif" ></a>
+<a onclick="clk(3,2)"><img name="s3_2" src="img/s0.gif" ></a>
+<a onclick="clk(3,3)"><img name="s3_3" src="img/s0.gif" ></a>
+<a onclick="clk(3,4)"><img name="s3_4" src="img/s0.gif" ></a>
+<a onclick="clk(3,5)"><img name="s3_5" src="img/s0.gif" ></a>
+<a onclick="clk(3,6)"><img name="s3_6" src="img/s0.gif" ></a>
+<a onclick="clk(3,7)"><img name="s3_7" src="img/s0.gif" ></a>
+<a onclick="clk(3,8)"><img name="s3_8" src="img/s0.gif" ></a>
+<a onclick="clk(3,9)"><img name="s3_9" src="img/s0.gif" ></a>
+<a onclick="clk(3,10)"><img name="s3_10" src="img/s0.gif" ></a>
+<a onclick="clk(3,11)"><img name="s3_11" src="img/s0.gif" ></a>
+<a onclick="clk(3,12)"><img name="s3_12" src="img/s0.gif" ></a>
+<a onclick="clk(3,13)"><img name="s3_13" src="img/s0.gif" ></a>
+<a onclick="clk(3,14)"><img name="s3_14" src="img/s0.gif" ></a>
+<br />
+
+<a onclick="clk(4,0)"><img name="s4_0" src="img/s0.gif" ></a>
+<a onclick="clk(4,1)"><img name="s4_1" src="img/s0.gif" ></a>
+<a onclick="clk(4,2)"><img name="s4_2" src="img/s0.gif" ></a>
+<a onclick="clk(4,3)"><img name="s4_3" src="img/s0.gif" ></a>
+<a onclick="clk(4,4)"><img name="s4_4" src="img/s0.gif" ></a>
+<a onclick="clk(4,5)"><img name="s4_5" src="img/s0.gif" ></a>
+<a onclick="clk(4,6)"><img name="s4_6" src="img/s0.gif" ></a>
+<a onclick="clk(4,7)"><img name="s4_7" src="img/s0.gif" ></a>
+<a onclick="clk(4,8)"><img name="s4_8" src="img/s0.gif" ></a>
+<a onclick="clk(4,9)"><img name="s4_9" src="img/s0.gif" ></a>
+<a onclick="clk(4,10)"><img name="s4_10" src="img/s0.gif" ></a>
+<a onclick="clk(4,11)"><img name="s4_11" src="img/s0.gif" ></a>
+<a onclick="clk(4,12)"><img name="s4_12" src="img/s0.gif" ></a>
+<a onclick="clk(4,13)"><img name="s4_13" src="img/s0.gif" ></a>
+<a onclick="clk(4,14)"><img name="s4_14" src="img/s0.gif" ></a>
+<br />
+
+<a onclick="clk(5,0)"><img name="s5_0" src="img/s0.gif" ></a>
+<a onclick="clk(5,1)"><img name="s5_1" src="img/s0.gif" ></a>
+<a onclick="clk(5,2)"><img name="s5_2" src="img/s0.gif" ></a>
+<a onclick="clk(5,3)"><img name="s5_3" src="img/s0.gif" ></a>
+<a onclick="clk(5,4)"><img name="s5_4" src="img/s0.gif" ></a>
+<a onclick="clk(5,5)"><img name="s5_5" src="img/s0.gif" ></a>
+<a onclick="clk(5,6)"><img name="s5_6" src="img/s0.gif" ></a>
+<a onclick="clk(5,7)"><img name="s5_7" src="img/s0.gif" ></a>
+<a onclick="clk(5,8)"><img name="s5_8" src="img/s0.gif" ></a>
+<a onclick="clk(5,9)"><img name="s5_9" src="img/s0.gif" ></a>
+<a onclick="clk(5,10)"><img name="s5_10" src="img/s0.gif" ></a>
+<a onclick="clk(5,11)"><img name="s5_11" src="img/s0.gif" ></a>
+<a onclick="clk(5,12)"><img name="s5_12" src="img/s0.gif" ></a>
+<a onclick="clk(5,13)"><img name="s5_13" src="img/s0.gif" ></a>
+<a onclick="clk(5,14)"><img name="s5_14" src="img/s0.gif" ></a>
+<br />
+<a onclick="clk(6,0)"><img name="s6_0" src="img/s0.gif" ></a>
+<a onclick="clk(6,1)"><img name="s6_1" src="img/s0.gif" ></a>
+<a onclick="clk(6,2)"><img name="s6_2" src="img/s0.gif" ></a>
+<a onclick="clk(6,3)"><img name="s6_3" src="img/s0.gif" ></a>
+<a onclick="clk(6,4)"><img name="s6_4" src="img/s0.gif" ></a>
+<a onclick="clk(6,5)"><img name="s6_5" src="img/s0.gif" ></a>
+<a onclick="clk(6,6)"><img name="s6_6" src="img/s0.gif" ></a>
+<a onclick="clk(6,7)"><img name="s6_7" src="img/s0.gif" ></a>
+<a onclick="clk(6,8)"><img name="s6_8" src="img/s0.gif" ></a>
+<a onclick="clk(6,9)"><img name="s6_9" src="img/s0.gif" ></a>
+<a onclick="clk(6,10)"><img name="s6_10" src="img/s0.gif" ></a>
+<a onclick="clk(6,11)"><img name="s6_11" src="img/s0.gif" ></a>
+<a onclick="clk(6,12)"><img name="s6_12" src="img/s0.gif" ></a>
+<a onclick="clk(6,13)"><img name="s6_13" src="img/s0.gif" ></a>
+<a onclick="clk(6,14)"><img name="s6_14" src="img/s0.gif" ></a>
+<br />
+
+<a onclick="clk(7,0)"><img name="s7_0" src="img/s0.gif" ></a>
+<a onclick="clk(7,1)"><img name="s7_1" src="img/s0.gif" ></a>
+<a onclick="clk(7,2)"><img name="s7_2" src="img/s0.gif" ></a>
+<a onclick="clk(7,3)"><img name="s7_3" src="img/s0.gif" ></a>
+<a onclick="clk(7,4)"><img name="s7_4" src="img/s0.gif" ></a>
+<a onclick="clk(7,5)"><img name="s7_5" src="img/s0.gif" ></a>
+<a onclick="clk(7,6)"><img name="s7_6" src="img/s0.gif" ></a>
+<a onclick="clk(7,7)"><img name="s7_7" src="img/s0.gif" ></a>
+<a onclick="clk(7,8)"><img name="s7_8" src="img/s0.gif" ></a>
+<a onclick="clk(7,9)"><img name="s7_9" src="img/s0.gif" ></a>
+<a onclick="clk(7,10)"><img name="s7_10" src="img/s0.gif" ></a>
+<a onclick="clk(7,11)"><img name="s7_11" src="img/s0.gif" ></a>
+<a onclick="clk(7,12)"><img name="s7_12" src="img/s0.gif" ></a>
+<a onclick="clk(7,13)"><img name="s7_13" src="img/s0.gif" ></a>
+<a onclick="clk(7,14)"><img name="s7_14" src="img/s0.gif" ></a>
+<br />
+
+<a onclick="clk(8,0)"><img name="s8_0" src="img/s0.gif" ></a>
+<a onclick="clk(8,1)"><img name="s8_1" src="img/s0.gif" ></a>
+<a onclick="clk(8,2)"><img name="s8_2" src="img/s0.gif" ></a>
+<a onclick="clk(8,3)"><img name="s8_3" src="img/s0.gif" ></a>
+<a onclick="clk(8,4)"><img name="s8_4" src="img/s0.gif" ></a>
+<a onclick="clk(8,5)"><img name="s8_5" src="img/s0.gif" ></a>
+<a onclick="clk(8,6)"><img name="s8_6" src="img/s0.gif" ></a>
+<a onclick="clk(8,7)"><img name="s8_7" src="img/s0.gif" ></a>
+<a onclick="clk(8,8)"><img name="s8_8" src="img/s0.gif" ></a>
+<a onclick="clk(8,9)"><img name="s8_9" src="img/s0.gif" ></a>
+<a onclick="clk(8,10)"><img name="s8_10" src="img/s0.gif" ></a>
+<a onclick="clk(8,11)"><img name="s8_11" src="img/s0.gif" ></a>
+<a onclick="clk(8,12)"><img name="s8_12" src="img/s0.gif" ></a>
+<a onclick="clk(8,13)"><img name="s8_13" src="img/s0.gif" ></a>
+<a onclick="clk(8,14)"><img name="s8_14" src="img/s0.gif" ></a>
+<br />
+
+<a onclick="clk(9,0)"><img name="s9_0" src="img/s0.gif" ></a>
+<a onclick="clk(9,1)"><img name="s9_1" src="img/s0.gif" ></a>
+<a onclick="clk(9,2)"><img name="s9_2" src="img/s0.gif" ></a>
+<a onclick="clk(9,3)"><img name="s9_3" src="img/s0.gif" ></a>
+<a onclick="clk(9,4)"><img name="s9_4" src="img/s0.gif" ></a>
+<a onclick="clk(9,5)"><img name="s9_5" src="img/s0.gif" ></a>
+<a onclick="clk(9,6)"><img name="s9_6" src="img/s0.gif" ></a>
+<a onclick="clk(9,7)"><img name="s9_7" src="img/s0.gif" ></a>
+<a onclick="clk(9,8)"><img name="s9_8" src="img/s0.gif" ></a>
+<a onclick="clk(9,9)"><img name="s9_9" src="img/s0.gif" ></a>
+<a onclick="clk(9,10)"><img name="s9_10" src="img/s0.gif" ></a>
+<a onclick="clk(9,11)"><img name="s9_11" src="img/s0.gif" ></a>
+<a onclick="clk(9,12)"><img name="s9_12" src="img/s0.gif" ></a>
+<a onclick="clk(9,13)"><img name="s9_13" src="img/s0.gif" ></a>
+<a onclick="clk(9,14)"><img name="s9_14" src="img/s0.gif" ></a>
+<br />
+
+<a onclick="clk(10,0)"><img name="s10_0" src="img/s0.gif" ></a>
+<a onclick="clk(10,1)"><img name="s10_1" src="img/s0.gif" ></a>
+<a onclick="clk(10,2)"><img name="s10_2" src="img/s0.gif" ></a>
+<a onclick="clk(10,3)"><img name="s10_3" src="img/s0.gif" ></a>
+<a onclick="clk(10,4)"><img name="s10_4" src="img/s0.gif" ></a>
+<a onclick="clk(10,5)"><img name="s10_5" src="img/s0.gif" ></a>
+<a onclick="clk(10,6)"><img name="s10_6" src="img/s0.gif" ></a>
+<a onclick="clk(10,7)"><img name="s10_7" src="img/s0.gif" ></a>
+<a onclick="clk(10,8)"><img name="s10_8" src="img/s0.gif" ></a>
+<a onclick="clk(10,9)"><img name="s10_9" src="img/s0.gif" ></a>
+<a onclick="clk(10,10)"><img name="s10_10" src="img/s0.gif" ></a>
+<a onclick="clk(10,11)"><img name="s10_11" src="img/s0.gif" ></a>
+<a onclick="clk(10,12)"><img name="s10_12" src="img/s0.gif" ></a>
+<a onclick="clk(10,13)"><img name="s10_13" src="img/s0.gif" ></a>
+<a onclick="clk(10,14)"><img name="s10_14" src="img/s0.gif" ></a>
+<br />
+
+<a onclick="clk(11,0)"><img name="s11_0" src="img/s0.gif" ></a>
+<a onclick="clk(11,1)"><img name="s11_1" src="img/s0.gif" ></a>
+<a onclick="clk(11,2)"><img name="s11_2" src="img/s0.gif" ></a>
+<a onclick="clk(11,3)"><img name="s11_3" src="img/s0.gif" ></a>
+<a onclick="clk(11,4)"><img name="s11_4" src="img/s0.gif" ></a>
+<a onclick="clk(11,5)"><img name="s11_5" src="img/s0.gif" ></a>
+<a onclick="clk(11,6)"><img name="s11_6" src="img/s0.gif" ></a>
+<a onclick="clk(11,7)"><img name="s11_7" src="img/s0.gif" ></a>
+<a onclick="clk(11,8)"><img name="s11_8" src="img/s0.gif" ></a>
+<a onclick="clk(11,9)"><img name="s11_9" src="img/s0.gif" ></a>
+<a onclick="clk(11,10)"><img name="s11_10" src="img/s0.gif" ></a>
+<a onclick="clk(11,11)"><img name="s11_11" src="img/s0.gif" ></a>
+<a onclick="clk(11,12)"><img name="s11_12" src="img/s0.gif" ></a>
+<a onclick="clk(11,13)"><img name="s11_13" src="img/s0.gif" ></a>
+<a onclick="clk(11,14)"><img name="s11_14" src="img/s0.gif" ></a>
+<br />
+
+<a onclick="clk(12,0)"><img name="s12_0" src="img/s0.gif" ></a>
+<a onclick="clk(12,1)"><img name="s12_1" src="img/s0.gif" ></a>
+<a onclick="clk(12,2)"><img name="s12_2" src="img/s0.gif" ></a>
+<a onclick="clk(12,3)"><img name="s12_3" src="img/s0.gif" ></a>
+<a onclick="clk(12,4)"><img name="s12_4" src="img/s0.gif" ></a>
+<a onclick="clk(12,5)"><img name="s12_5" src="img/s0.gif" ></a>
+<a onclick="clk(12,6)"><img name="s12_6" src="img/s0.gif" ></a>
+<a onclick="clk(12,7)"><img name="s12_7" src="img/s0.gif" ></a>
+<a onclick="clk(12,8)"><img name="s12_8" src="img/s0.gif" ></a>
+<a onclick="clk(12,9)"><img name="s12_9" src="img/s0.gif" ></a>
+<a onclick="clk(12,10)"><img name="s12_10" src="img/s0.gif" ></a>
+<a onclick="clk(12,11)"><img name="s12_11" src="img/s0.gif" ></a>
+<a onclick="clk(12,12)"><img name="s12_12" src="img/s0.gif" ></a>
+<a onclick="clk(12,13)"><img name="s12_13" src="img/s0.gif" ></a>
+<a onclick="clk(12,14)"><img name="s12_14" src="img/s0.gif" ></a>
+<br /><a onclick="clk(13,0)"><img name="s13_0" src="img/s0.gif" ></a>
+<a onclick="clk(13,1)"><img name="s13_1" src="img/s0.gif" ></a>
+<a onclick="clk(13,2)"><img name="s13_2" src="img/s0.gif" ></a>
+<a onclick="clk(13,3)"><img name="s13_3" src="img/s0.gif" ></a>
+<a onclick="clk(13,4)"><img name="s13_4" src="img/s0.gif" ></a>
+<a onclick="clk(13,5)"><img name="s13_5" src="img/s0.gif" ></a>
+<a onclick="clk(13,6)"><img name="s13_6" src="img/s0.gif" ></a>
+<a onclick="clk(13,7)"><img name="s13_7" src="img/s0.gif" ></a>
+<a onclick="clk(13,8)"><img name="s13_8" src="img/s0.gif" ></a>
+<a onclick="clk(13,9)"><img name="s13_9" src="img/s0.gif" ></a>
+<a onclick="clk(13,10)"><img name="s13_10" src="img/s0.gif" ></a>
+<a onclick="clk(13,11)"><img name="s13_11" src="img/s0.gif" ></a>
+<a onclick="clk(13,12)"><img name="s13_12" src="img/s0.gif" ></a>
+<a onclick="clk(13,13)"><img name="s13_13" src="img/s0.gif" ></a>
+<a onclick="clk(13,14)"><img name="s13_14" src="img/s0.gif" ></a>
+<br />
+
+<a onclick="clk(14,0)"><img name="s14_0" src="img/s0.gif" ></a>
+<a onclick="clk(14,1)"><img name="s14_1" src="img/s0.gif" ></a>
+<a onclick="clk(14,2)"><img name="s14_2" src="img/s0.gif" ></a>
+<a onclick="clk(14,3)"><img name="s14_3" src="img/s0.gif" ></a>
+<a onclick="clk(14,4)"><img name="s14_4" src="img/s0.gif" ></a>
+<a onclick="clk(14,5)"><img name="s14_5" src="img/s0.gif" ></a>
+<a onclick="clk(14,6)"><img name="s14_6" src="img/s0.gif" ></a>
+<a onclick="clk(14,7)"><img name="s14_7" src="img/s0.gif" ></a>
+<a onclick="clk(14,8)"><img name="s14_8" src="img/s0.gif" ></a>
+<a onclick="clk(14,9)"><img name="s14_9" src="img/s0.gif" ></a>
+<a onclick="clk(14,10)"><img name="s14_10" src="img/s0.gif" ></a>
+<a onclick="clk(14,11)"><img name="s14_11" src="img/s0.gif" ></a>
+<a onclick="clk(14,12)"><img name="s14_12" src="img/s0.gif" ></a>
+<a onclick="clk(14,13)"><img name="s14_13" src="img/s0.gif" ></a>
+<a onclick="clk(14,14)"><img name="s14_14" src="img/s0.gif" ></a>
+<br />
+
+
+</div>
+<div id = "debug">
+</div>
+</html>
