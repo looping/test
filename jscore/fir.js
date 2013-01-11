@@ -1,6 +1,3 @@
-
-
-
 function getBestMachMove(map, size, flag) {
 
 	s=new Array();
