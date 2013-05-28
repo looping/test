@@ -4,18 +4,16 @@ import m
 from bottle import template
 
 def hello():
-	return 'hello;'
-    	return '<h1>Hello %s!</h1>' % name.title()
-	m.db.connect()
-	users = m.User().select().limit(10)
-	m.db.close()
+#	m.db.connect()
+	users = m.Blog().select().limit(10)
+#	m.db.close()
 	username = ''
 	for user in users:
 		 username = username + user.username		
 	
 	return template('<b>Hello {{name}}</b>!', name=username)
 
-def save_post(title, content):
+def save_post(title = ' ', content = ' '):
 	m.db.connect()
 	blog = m.Blog()
 	blog.title = title
