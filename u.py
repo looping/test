@@ -18,3 +18,18 @@ def ps():
 	content = request.forms.get('content')
 	return c.save_post(title, content)
 
+@route('/t/r/s/<key>/<value>')
+def trs(key, value):
+	return c.test_redis_set(key, value)
+
+@route('/t/r/g/<key>')
+def trg(key):
+	return c.test_redis_get(key)
+
+@route('/t/m/s/<key>/<value>')
+def tms(key, value):
+	return c.test_memcache_set(key, value)
+
+@route('/t/m/g/<key>')
+def tmg(key):
+	return c.test_memcache_get(key)

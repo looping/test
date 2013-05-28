@@ -1,6 +1,6 @@
 #coding: utf-8
 import m
-
+import cs
 from bottle import template
 
 def hello():
@@ -35,3 +35,22 @@ def list_post(page = 0):
 
 def show_post_form():
 	return 'hi'
+
+def test_redis_set(key = ' ', value = ' '):
+	r = cs.useredis()
+	r.set(key, value)
+	return r.get(key)
+
+def test_redis_get(key):
+	r = cs.useredis()
+	return r.get(key)
+
+def test_memcache_set(key = ' ', value = ' '):
+	m = cs.usememcache()
+	m.set(key, value)
+	return m.get(key)
+
+def test_memcache_get(key):
+	m = cs.usememcache()
+	m.disconnect_all()
+	return m.get(key)
