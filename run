@@ -1,6 +1,6 @@
 import u
 from bottle import run
-#run(app=app, host='0.0.0.0', port=8880)
-#run(app=app, server='tornado', host='0.0.0.0', port=8880)
+#run(host='0.0.0.0', port=8880)
+#run(server='tornado', host='0.0.0.0', port=8888)
 #run(server='bjoern', host='0.0.0.0', port=8888, app=app)
 run(server='bjoern', host='0.0.0.0', port=8888)
