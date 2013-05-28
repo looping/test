@@ -1,10 +1,14 @@
+##############
 ### Python ###
+##############
 *.py[cod]
-
-# C extensions
+###############
+# C extensions#
+###############
 *.so
-
-# Packages
+###########
+# Packages#
+###########
 *.egg
 *.egg-info
 dist
@@ -19,25 +23,31 @@ develop-eggs
 lib
 lib64
 __pycache__
-
-# Installer logs
+#################
+# Installer logs#
+#################
 pip-log.txt
-
-# Unit test / coverage reports
+###############################
+# Unit test / coverage reports#
+###############################
 .coverage
 .tox
 nosetests.xml
-
-# Translations
+###############
+# Translations#
+###############
 *.mo
-
-# Mr Developer
+###############
+# Mr Developer#
+###############
 .mr.developer.cfg
 .project
 .pydevproject
-
-#Sqlite DB file
+################
+#Sqlite DB file#
+################
 *.db
-
-#Cache
+#######
+#Cache#
+#######
 data/
