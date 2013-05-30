@@ -1,4 +1,5 @@
 import u
+import conf
 from bottle import run, app
 from beaker.middleware import SessionMiddleware
 
@@ -15,9 +16,6 @@ session_opts = {
 }
 
 theRealApp = SessionMiddleware(theNewApp, session_opts)
-serverName = 'bjoern'
-hostAddr = '0.0.0.0'
-listenPort = 8888
 
 ###########################################
 #Use bottle.run to run a WSGI server#
@@ -25,4 +23,4 @@ listenPort = 8888
 #run(host='0.0.0.0', port=8880)
 #run(server='tornado', host='0.0.0.0', port=8888)
 #run(server='bjoern', host='0.0.0.0', port=8888, app=app)
-run(app = theRealApp, server = serverName, host = hostAddr, port = listenPort)
+run(app = theRealApp, server = conf.__WSGISERVERNAME__, host = conf.__HOSTSERVERADDR__, port = conf.__LISTENPORT__)

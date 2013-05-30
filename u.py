@@ -12,12 +12,20 @@ def se():
 	email = request.query.get('ail')
 	return c.send_ui_email(email)
 
+@route('/c', method = 'get')
+@view('t/auth_email_code')
+def co():
+	code = request.query.get('de')
+	s = request.environ.get('beaker.session')
+	s['public_token'] = code
+	return c.auth_email_code(code) 
+
 @route('/')
 @view('t/post_list')
 def r():
 	s = request.environ.get('beaker.session')
 	public_token = s.get('public_token')
-	if public_token == None:
+	if public_token == None or c.auth_public_token(public_token) == 'NO':
 		return '<a href ="./si">Sign UI</a>'
 	else:
 		return c.list_post() 

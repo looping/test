@@ -1,6 +1,7 @@
 #coding: utf-8
 import m
 import cs
+import conf
 from bottle import template
 
 ##
@@ -23,32 +24,6 @@ smtpserver='smtp.126.com'
 smtpuser='uiemail@126.com'
 smtppass='uiemail@126'
 smtpport='25'
-
-def connect():
-    "connect to smtp server and return a smtplib.SMTP instance object"
-    server=smtplib.SMTP(smtpserver,smtpport)
-    server.ehlo()
-    server.login(smtpuser,smtppass)
-    return server
-    
-def sendmessage(server,to,subj,content):
-    "using server send a email"
-    msg = MIMEMultipart()
-    msg['Mime-Version']='1.0'
-    msg['From']    = smtpuser
-    msg['To']      = to
-    msg['Subject'] = subj
-    msg['Date']    = email.Utils.formatdate()          # curr datetime, rfc2822
-    msg.set_payload(content)
-  #  try:    
-    failed = server.sendmail(smtpuser,to,msg.as_string())   # may also raise exc
-
-
-   # except Exception ,ex:
-    #    print Exception,ex
-     #   print 'Error - send failed'
-    #else:
-     #   print "send success!"
 
 def sendEmail(authInfo, fromAdd, toAdd, subject, plainText, htmlText):
 
@@ -76,8 +51,8 @@ def sendEmail(authInfo, fromAdd, toAdd, subject, plainText, htmlText):
         msgRoot.attach(msgAlternative)
 
         #设定纯文本信息
-#        msgText = MIMEText(plainText, 'plain', 'utf-8')
-#        msgAlternative.attach(msgText)
+        msgText = MIMEText(plainText, 'plain', 'utf-8')
+        msgAlternative.attach(msgText)
 
         #设定HTML信息
         msgText = MIMEText(htmlText, 'html', 'utf-8')
@@ -97,7 +72,6 @@ def sendEmail(authInfo, fromAdd, toAdd, subject, plainText, htmlText):
         smtp.connect(server)
         smtp.login(user, passwd)
         smtp.sendmail(strFrom, strTo, msgRoot.as_string())
-#        smtp.sendmail(strFrom, strTo, msgRoot.as_string())
         smtp.quit()
         return
 
@@ -125,16 +99,34 @@ def send_ui_email(email):
         fromAdd = 'uiemail@126.com'
         toAdd = [email]
 	loginCode = get_login_code(email)
-        subject = 'A new login code:', loginCode
-        plainText = '测试登录 http://192.168.0.3:8888/c?de=%s' % loginCode
-        htmlText = '<B><a href="http://192.168.0.3:8888/c?de=%s">点此登录</a></B>' % loginCode
-        #sendEmail(authInfo, fromAdd, toAdd, subject, plainText, htmlText)
-	to = toAdd
-	subj = subject
-	text = plainText
-    	server=connect()
-    	sendmessage(server,to,subj,text)    
+        subject = '邮箱登录验证码：%.5s' % loginCode
+	login_link = 'http://%s:%s/c?de=%s' % (conf.__HOSTSERVERADDR__, conf.__LISTENPORT__, loginCode)
+        plainText = '登录链接 %s' % (login_link)
+        htmlText = '<br />%s,您好：<p>    欢迎使用XXX，现在您可以<B><a href="%s">点此登录</a></B>。<br />    或者在浏览器地址栏中输入 %s<br />    祝您码字愉快！</p>' % (email, login_link, login_link)
+        sendEmail(authInfo, fromAdd, toAdd, subject, plainText, htmlText)
 	return dict(email = email, code = loginCode)
+
+def gen_token(code):
+	token = code 
+	return token
+
+def auth_email_code(code):
+	status = 'NO'
+	m = cs.usememcache()
+	is_auth_code = m.get(code)
+	if is_auth_code:
+		status = 'YES'
+		token = gen_token(code)
+		m.set(code, token)
+	return dict(status = status)
+def auth_public_token(token):
+	status = 'NO'
+	m = cs.usememcache()
+	atoken = m.get(token)
+	if atoken:
+		status = 'YES'
+	return status
+
 ##
 #Just a DB tester, ORM:MySQL, PostgreSQLi...
 ##
