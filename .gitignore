@@ -47,7 +47,7 @@ nosetests.xml
 #Sqlite DB file#
 ################
 *.db
-#######
-#Cache#
-#######
-data/
+####################################
+#Beaker.middleware session.data_dir#
+####################################
+.bmsdata/

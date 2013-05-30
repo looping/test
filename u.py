@@ -1,10 +1,26 @@
 from bottle import route, view, request, template
 import c
 
+@route('/si')
+@view('t/sign_ui')
+def s():
+	return dict()
+
+@route('/e', method = 'get')
+@view('t/send_email_done')
+def se():
+	email = request.query.get('ail')
+	return c.send_ui_email(email)
+
 @route('/')
 @view('t/post_list')
 def r():
-	return c.list_post() 
+	s = request.environ.get('beaker.session')
+	public_token = s.get('public_token')
+	if public_token == None:
+		return '<a href ="./si">Sign UI</a>'
+	else:
+		return c.list_post() 
 
 @route('/p')
 @view('t/post_form')
