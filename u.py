@@ -1,6 +1,16 @@
 from bottle import route, view, request, template
 import c
 
+@route('/sd')
+@view('t/logout')
+def sd():
+	s = request.environ.get('beaker.session')
+	token = s.get('public_token')
+	if token:
+		#c.logout()
+		s.delete()
+	return dict() 
+
 @route('/si')
 @view('t/sign_ui')
 def s():

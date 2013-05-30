@@ -6,7 +6,9 @@
 </title>
 </head>
 <body>
-<a href = './p'>Add new posts</a>
+<a href = './p'> 添 加 </a>
+|
+<a href = './sd'> 注 销 </a>
 %for blog in blogs:
 	<fieldset>
 		<legend><strong>{{blog.title}}</strong></legend> 
