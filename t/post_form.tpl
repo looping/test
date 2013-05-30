@@ -6,15 +6,15 @@
 </title>
 </head>
 <body>
-<a href = '.'>Home</a>
+<a href = '.'> 首 页 </a>
 <form action="./ps" method="post">
   <fieldset>
-    <legend>Post Form</legend>
-	Title:<input type="text" name="title" size=48 autofocus="autofocus" placeholder="Input title here!"/>
+    <legend>发布框</legend>
+	标题:<input type="text" name="title" size=48 autofocus="autofocus" placeholder="获奖感言"/>
 	<br />
-	Content:<input type="text" name="content" size=128 placeholder="Input content here!"/>
+	内容:<textarea type="text" name="content" size=128 placeholder="今天天气真好！"></textarea>
 	<br />
-	<input type = "submit" value = "Submit"/>
+	<input type = "submit" value = "提交"/>
   </fieldset>
 </form>
 </body>

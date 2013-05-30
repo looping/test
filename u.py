@@ -1,3 +1,4 @@
+#coding: utf-8
 from bottle import route, view, request, template
 import c
 
@@ -36,22 +37,33 @@ def r():
 	s = request.environ.get('beaker.session')
 	public_token = s.get('public_token')
 	if public_token == None or c.auth_public_token(public_token) == 'NO':
-		return '<a href ="./si">Sign UI</a>'
+		return '<a href ="./si">登录</a>'
 	else:
 		return c.list_post() 
 
 @route('/p')
 @view('t/post_form')
 def p():
-	return dict()
+	s = request.environ.get('beaker.session')
+	public_token = s.get('public_token')
+	if public_token == None or c.auth_public_token(public_token) == 'NO':
+		return '<a href ="./si">登录</a>'
+	else:
+		return dict()
 
 @route('/ps', method = 'post')
 @view('t/post_result')
 def ps():
-	title = request.forms.get('title')
-	content = request.forms.get('content')
-	return c.save_post(title, content)
+	s = request.environ.get('beaker.session')
+	public_token = s.get('public_token')
+	if public_token == None or c.auth_public_token(public_token) == 'NO':
+		return '<a href ="./si">登录</a>'
+	else:
+		title = request.forms.get('title')
+		content = request.forms.get('content')
+		return c.save_post(title, content)
 
+#########################################################
 @route('/t/r/s/<key>/<value>')
 def trs(key, value):
 	return c.test_redis_set(key, value)

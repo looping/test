@@ -6,11 +6,11 @@
 </title>
 </head>
 <body>
-<a href = '.'>Home</a>
+<a href = '../'>首页</a>
 <form method = "GET" action = "./e">
-Email:
-<input type ="text" name = "ail" size = "89" autofocus = "autofocus" placeholder = "Please input your awesome EMAIL address!" />
-<input type = "submit" value = "Submit" />
+邮箱:
+<input type ="text" name = "ail" size = "32" autofocus = "autofocus" placeholder = "niubist@niubility.cc" />
+<input type = "submit" value = "提交" />
 
 </form>
 </body>

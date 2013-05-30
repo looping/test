@@ -20,11 +20,6 @@ import smtplib
 import smtplib,email,sys
 from email.Message import Message
 
-smtpserver='smtp.126.com'
-smtpuser='uiemail@126.com'
-smtppass='uiemail@126'
-smtpport='25'
-
 def sendEmail(authInfo, fromAdd, toAdd, subject, plainText, htmlText):
 
         strFrom = fromAdd
@@ -119,6 +114,7 @@ def auth_email_code(code):
 		token = gen_token(code)
 		m.set(code, token)
 	return dict(status = status)
+
 def auth_public_token(token):
 	status = 'NO'
 	m = cs.usememcache()
@@ -157,7 +153,7 @@ def list_post(page = 0):
 	page_index = int(page)
 	m.db.connect()
 	blogs = m.Blog.select().limit(20).order_by(m.Blog.title.desc())
-	showblog = 'Blog list'
+	showblog = '内容列表'
 	return dict(blogs = blogs)
 
 def show_post_form():
