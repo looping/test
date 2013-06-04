@@ -1,0 +1,3 @@
+__WSGISERVERNAME__ = 'bjoern'
+__HOSTSERVERADDR__ = '0.0.0.0'
+__LISTENPORT__ = 8888

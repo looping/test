@@ -1,0 +1,9 @@
+import conf
+from bottle import run, app
+import u
+
+theRealApp = app()
+###########################################
+#Use bottle.run to run a WSGI server#
+###########################################
+run(app = theRealApp, server = conf.__WSGISERVERNAME__, host = conf.__HOSTSERVERADDR__, port = conf.__LISTENPORT__)
