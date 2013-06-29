@@ -1,0 +1,9 @@
+[submodule "libs/bottle"]
+	path = libs/bottle
+	url = https://github.com/defnull/bottle.git
+[submodule "libs/peewee"]
+	path = libs/peewee
+	url = https://github.com/coleifer/peewee
+[submodule "WSGI/bjoern"]
+	path = WSGI/bjoern
+	url = https://github.com/jonashaag/bjoern.git

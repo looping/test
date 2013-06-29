@@ -6,13 +6,13 @@ db = SqliteDatabase('a.db')
 class BaseModel(Model):
 	class Meta:
 		database = db
-class Blog(BaseModel):
-	content = CharField()
-	title = CharField()
-	author = ForeignKeyField(User)	
+class Groups(BaseModel):
+	name = CharField()
+	attribute = CharField()
+	owner = ForeignKeyField(Users);	
 	def __unicode__(self):
 		return self.title
-class User(BaseModel):
+class Users(BaseModel):
 	name = CharField()
 	first_name = CharField()
 	last_name = CharField()
@@ -20,6 +20,81 @@ class User(BaseModel):
 	last_login = DateField()
 	email = CharField()
 	first_login = DateField()
+
+class UserGroups(BaseModel):
+        user = ForeignKeyField(Users)
+        role = CharField()
+        group = ForeignKeyField(Groups)
+
+class Messages(BaseModel):
+        title = CharField()
+        content = CharField()
+        attribute = CharField()
+        owner = ForeignKeyField(Users)
+        create_time = DateField()
+        send_from = ForeignKeyField(Users)
+        send_to_user = ForeignKeyField(Users)
+        send_to_group = ForeignKeyField(Groups)
+        status = CharField()
+        
+class Boxes(BaseModel):
+        owner = ForeignKeyField(Users)
+        name = CharField()
+        attribute = CharField()
+        
+class MessageBoxes(BaseModel):
+        message = ForeignKeyField(Messages)
+        box = ForeignKeyField(Boxes)
+
+class Images():
+        name = CharField()
+        arrtibute = CharField()
+class video():
+        name = CharField()
+class Audio():
+        name = CharField()
+        
+class Provinces(BaseModel):
+        name = CharField()
+        pointx = CharField()
+        pointy = CharField()
+        flag_img = ForeignKeyField(Images)
+        
+class Citys(BaseModel):
+        name = CharField()
+        pointx = CharField()
+        pointy = CharField()
+        flag_img = ForeignKeyField(Images)
+        attribute = CharField()
+        location = ForeignKeyField(Provinces)
+        
+class Estates(BaseModel):
+        name = CharField()
+        owner = CharField()
+        map_img = ForeignKeyField(Images)
+        location = ForeignKeyField(Citys)
+
+class Villages(BaseModel):
+        name = CharField()
+        location = ForeignKeyField(Estates)
+        
+class Buildings(BaseModel):
+        name = CharField()
+        owner = CharField()
+        location = ForeignKeyField(Villages)
+
+class Units(BaseModel):
+        name = CharField()
+        location = ForeignKeyField(Buildings)
+
+class Floors(BaseModel):
+        name = CharField()
+        location = ForeignKeyField(Units)
+
+class Rooms(BaseModel):
+        name = CharField()
+        location = ForeignKeyField(Floors)
+
 
 
 def create_tables():

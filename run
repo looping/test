@@ -1,21 +1,8 @@
+from bottle import route, view, request, template, run, app
 import u
-import conf
-from bottle import run, app
-from beaker.middleware import SessionMiddleware
-
-theNewApp = app()
-
-##
-#Server settings: Middleware, app, server name, host address, listen port, and so on.
-##
-session_opts = {
-	'session.type': 'file',
-	'session.cookie_expires': 300,
-	'session.data_dir': './.bmsdata',
-	'session.auto': True
-}
-
-theRealApp = SessionMiddleware(theNewApp, session_opts)
+__WSGISERVERNAME__ = ''
+__HOSTSERVERADDR__ = '0.0.0.0'
+__LISTENPORT__ = 8888
 
 ###########################################
 #Use bottle.run to run a WSGI server#
@@ -23,4 +10,4 @@ theRealApp = SessionMiddleware(theNewApp, session_opts)
 #run(host='0.0.0.0', port=8880)
 #run(server='tornado', host='0.0.0.0', port=8888)
 #run(server='bjoern', host='0.0.0.0', port=8888, app=app)
-run(app = theRealApp, server = conf.__WSGISERVERNAME__, host = conf.__HOSTSERVERADDR__, port = conf.__LISTENPORT__)
+run(app = app(), host = __HOSTSERVERADDR__, port = __LISTENPORT__)
