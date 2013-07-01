@@ -98,9 +98,3 @@ class Floors(BaseModel):
 class Rooms(BaseModel):
         name = CharField()
         location = ForeignKeyField(Floors)
-
-
-
-def create_tables():
-	User.create_table()
-	Blog.create_table()

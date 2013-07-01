@@ -1,3 +1,4 @@
 import m
-
-m.create_tables()
+Users.create_table()
+Groups.create_table()
+UserGroups.create_table()
