@@ -48,12 +48,14 @@ class MessageBoxes(BaseModel):
         message = ForeignKeyField(Messages)
         box = ForeignKeyField(Boxes)
 
-class Images():
+class Images(BaseModel):
         name = CharField()
         arrtibute = CharField()
-class video():
+
+class video(BaseModel):
         name = CharField()
-class Audio():
+
+class Audio(BaseModel):
         name = CharField()
         
 class Provinces(BaseModel):
