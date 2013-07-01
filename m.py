@@ -15,6 +15,10 @@ class Users(BaseModel):
 	last_login = DateField()
 	email = CharField()
 	first_login = DateField()
+	def dispose(self):
+		pass
+	def getpasswd_byname(self, name):
+		return "testpwd"
 
 class Groups(BaseModel):
 	name = CharField()
