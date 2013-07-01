@@ -6,12 +6,7 @@ db = SqliteDatabase('a.db')
 class BaseModel(Model):
 	class Meta:
 		database = db
-class Groups(BaseModel):
-	name = CharField()
-	attribute = CharField()
-	owner = ForeignKeyField(Users);	
-	def __unicode__(self):
-		return self.title
+
 class Users(BaseModel):
 	name = CharField()
 	first_name = CharField()
@@ -20,6 +15,13 @@ class Users(BaseModel):
 	last_login = DateField()
 	email = CharField()
 	first_login = DateField()
+
+class Groups(BaseModel):
+	name = CharField()
+	attribute = CharField()
+	owner = ForeignKeyField(Users);	
+	def __unicode__(self):
+		return self.title
 
 class UserGroups(BaseModel):
         user = ForeignKeyField(Users)
