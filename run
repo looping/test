@@ -1,13 +1,7 @@
-from bottle import route, view, request, template, run, app
+from bottle import run, app
 import u
 __WSGISERVERNAME__ = ''
 __HOSTSERVERADDR__ = '0.0.0.0'
 __LISTENPORT__ = 8888
 
-###########################################
-#Use bottle.run to run a WSGI server#
-###########################################
-#run(host='0.0.0.0', port=8880)
-#run(server='tornado', host='0.0.0.0', port=8888)
-#run(server='bjoern', host='0.0.0.0', port=8888, app=app)
 run(app = app(), host = __HOSTSERVERADDR__, port = __LISTENPORT__)
