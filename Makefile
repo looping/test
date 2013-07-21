@@ -10,7 +10,7 @@ LIBDIR = libs
 DEBUGDIR = debug
 INCDIR = inc
 
-target = $(DEBUGDIR)/desocode
+target = $(DEBUGDIR)/aw
 
 LDFLAGS = $(LIBS)
 RM = -rm -rf
@@ -29,4 +29,6 @@ $(DEBUGDIR)/main.o : $(SRCDIR)/main.c world.h
 
 clean :
 	$(RM) $(OBJS) $(target)
+all :
+	mkdir $(DEBUGDIR)
 .PHONY : all clean
