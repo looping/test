@@ -6,7 +6,7 @@
 	再见
 	```
 	
-	```objective-c
+```objective-c
 	
 	# pragma mark Pragma 
 
@@ -21,6 +21,6 @@
     	return [apple eat:self];
 	}
 	
-	```
+```
 	
 	
